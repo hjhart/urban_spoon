@@ -1,24 +1,9 @@
-require 'rubygems'
-require 'open-uri'
-require 'nokogiri'
-require 'json'
-require 'awesome_print'
-require 'date'
-require 'rubygems'
-require 'active_record'
-require 'yaml'
+$:.push(File.join(File.dirname(File.expand_path(__FILE__)), "lib"))
+require 'environment'
 
 STDOUT.sync = true
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
-
-class Restaurant < ActiveRecord::Base
-  has_many :reservations
-end
-
-class Reservation < ActiveRecord::Base
-  belongs_to :restaurant
-end
 
 def header msg
   puts;puts;
@@ -28,9 +13,12 @@ def header msg
   puts;puts;
 end
 
-def get_most_frequent_address_attributes(count_by = :state, max_results = 20) 
-  addresses = { :state => [], :zip => [], :city => [] }
+def restaurants
   restaurants = Restaurant.all(:conditions => "name IS NOT NULL")
+end
+
+def get_most_frequent_address_attributes(count_by = :state) 
+  addresses = { :state => [], :zip => [], :city => [] }
   
   restaurants.each do |rest| 
     city_state_zip = rest.address.split("|")[2]
@@ -44,12 +32,15 @@ def get_most_frequent_address_attributes(count_by = :state, max_results = 20)
       addresses[:zip] << zip
     end
   
+  output_frequencies addresses[count_by], 20
   end
+end
 
+def output_frequencies(array, max_results=20)
   b = Hash.new(0)
 
   # iterate over the array, counting duplicate entries
-  addresses[count_by].each do |v|
+  array.each do |v|
     b[v] += 1
   end
 
@@ -59,17 +50,31 @@ def get_most_frequent_address_attributes(count_by = :state, max_results = 20)
   end
 end
 
+def address_frequencies
+  # analyze city frequency
+  header "Most frequent cities on urban spoon: "
+  get_most_frequent_address_attributes(:city)
+  # analyze state frequency
+  header "Most frequent states on urban spoon: "
+  get_most_frequent_address_attributes(:state)
+  # analyze zip frequency (this one is particularly nasty [and uninteresting])
+  header "Most frequent zip codes on urban spoon: "
+  get_most_frequent_address_attributes(:zip)
+end
 
+# uncomment this out if you want frequency statistics
+# address_frequencies()
 
+state_bird = Restaurant.find_by_name('State Bird Provisions')
+other_restaurant = Restaurant.find(106)
 
-# analyze city frequency
-header "Most frequent cities on urban spoon: "
-get_most_frequent_address_attributes(:city)
-# analyze state frequency
-header "Most frequent states on urban spoon: "
-get_most_frequent_address_attributes(:state)
-# analyze zip frequency (this one is particularly nasty [and uninteresting])
-header "Most frequent zip codes on urban spoon: "
-get_most_frequent_address_attributes(:zip)
+if state_bird.has_nearest_reservations_within(7.days)
+  nearest_res = state_bird.nearest_reservations.first
+  nearest_res = nearest_res.strftime("%m/%d at %l:%M%P")
+  prowl_message "Reservation Warning", "There was a reservation available! Next available #{nearest_res}"
+else
+  prowl_message "Reservation Warning", "There was no reservation available!"
+end
 
-
+other_restaurant.has_nearest_reservations_within(1.hour)
+# reservation_distribution(state_bird)

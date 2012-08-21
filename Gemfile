@@ -1,5 +1,6 @@
 source :rubygems
 
+gem 'prowl'
 gem 'nokogiri'
 gem 'awesome_print'
 gem 'activerecord'

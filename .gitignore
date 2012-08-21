@@ -1,2 +1,3 @@
 .DS_Store
 db/urban_spoon.sqlite.db
+prowl.yml

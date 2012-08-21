@@ -19,6 +19,7 @@ GEM
     logger (1.2.8)
     multi_json (1.3.6)
     nokogiri (1.5.5)
+    prowl (0.1.3)
     sqlite3 (1.3.6)
     tzinfo (0.3.33)
 
@@ -30,4 +31,5 @@ DEPENDENCIES
   awesome_print
   logger
   nokogiri
+  prowl
   sqlite3

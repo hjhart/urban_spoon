@@ -1,24 +1,9 @@
-require 'rubygems'
-require 'open-uri'
-require 'nokogiri'
-require 'json'
-require 'awesome_print'
-require 'date'
-require 'rubygems'
-require 'active_record'
-require 'yaml'
+$:.push(File.join(File.dirname(File.expand_path(__FILE__)), "lib"))
+require 'environment'
 
 STDOUT.sync = true
 dbconfig = YAML::load(File.open('database.yml'))
 ActiveRecord::Base.establish_connection(dbconfig)
-
-class Restaurant < ActiveRecord::Base
-  has_many :reservations
-end
-
-class Reservation < ActiveRecord::Base
-  belongs_to :restaurant
-end
 
 numbers = (3023..5000)
 numbers.each do |urban_spoon_id|
