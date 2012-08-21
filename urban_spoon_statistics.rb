@@ -62,19 +62,19 @@ def address_frequencies
   get_most_frequent_address_attributes(:zip)
 end
 
+def get_most_booked_restaurants
+  results = ActiveRecord::Base.connection.execute("select count(*) as count, rest.name, rest.address from reservations res, restaurants rest where rest.id = res.restaurant_id AND rest.address LIKE '%San Francisco%' group by rest.name order by count asc;").to_a
+  ap results
+end
+
+# see the most "popular" restaurants in san francisco on urban spoon.
+get_most_booked_restaurants()
+
+
+
 # uncomment this out if you want frequency statistics
 # address_frequencies()
 
-state_bird = Restaurant.find_by_name('State Bird Provisions')
-other_restaurant = Restaurant.find(106)
 
-if state_bird.has_nearest_reservations_within(7.days)
-  nearest_res = state_bird.nearest_reservations.first
-  nearest_res = nearest_res.strftime("%m/%d at %l:%M%P")
-  prowl_message "Reservation Warning", "There was a reservation available! Next available #{nearest_res}"
-else
-  prowl_message "Reservation Warning", "There was no reservation available!"
-end
-
-other_restaurant.has_nearest_reservations_within(1.hour)
+# other_restaurant.has_nearest_reservations_within(1.hour)
 # reservation_distribution(state_bird)
