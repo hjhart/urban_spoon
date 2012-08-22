@@ -1,3 +1,4 @@
+# gems
 require 'rubygems'
 require 'open-uri'
 require 'nokogiri'
@@ -7,6 +8,9 @@ require 'date'
 require 'rubygems'
 require 'active_record'
 require 'yaml'
+require "highline/import"
+
+# local files
 require 'prowl_notifier'
 require 'restaurant'
 require 'reservation'

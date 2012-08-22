@@ -4,7 +4,7 @@ class CreateRestaurants < ActiveRecord::Migration
       t.column :name, :string
       t.column :address, :text
       t.column :urban_spoon_id, :integer, :null => false
-      t.column :online_res_avail, :integer, :null => false
+      t.column :online_res_avail, :integer
       t.timestamps
     end
     
