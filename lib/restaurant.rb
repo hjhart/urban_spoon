@@ -46,14 +46,14 @@ class Restaurant < ActiveRecord::Base
     if ANAL_TIME
       reservations = nearest_anal_reservations
     else
-      reservations = nearest_resrvations
+      reservations = nearest_reservations
     end
     
     ap "Found reservations"
     ap reservations
     
     reservations.each do |res|
-      if (res - time_frame < Date.today)
+      if (res - time_frame < Time.now)
         puts "You found yourself a reservation!"
         return res
       end
